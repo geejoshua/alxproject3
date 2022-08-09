@@ -172,11 +172,7 @@ jobs:
       - image: cimg/python:3.10
     steps:
       - checkout
-      - run:
-          name: install tar utility
-          command: |
-            yum install -y tar gzip
-            
+      - install_awscli   
       - run:
           name: Ensure back-end infrastructure exists
           command: |
