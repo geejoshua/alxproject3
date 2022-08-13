@@ -385,6 +385,7 @@ jobs:
             echo "Old Workflow ID: ${OldWorkflowID}"
             echo "CURRENT Workflow ID: ${CIRCLE_WORKFLOW_ID:0:7}"
             curl --insecure https://kvdb.io/${KVDB_BUCKET}/old_workflow_id -d "${OldWorkflowID}"
+            
       - run:
           name: Update cloudfront distribution
           command: |
@@ -401,11 +402,14 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Fetch Old Workflow ID from kvdb.io
+          name: Fetch Old Workflow ID
           command: |
-            export OldWorkflowID=$(curl --insecure https://kvdb.io/${KVDB_BUCKET}/old_workflow_id)
+            export OldWorkflowID=$(aws cloudformation list-exports \
+              --query "Exports[?Name==\`WorkflowID\`].Value" \
+              --no-paginate --output text)
             echo "Old Workflow ID: ${OldWorkflowID}"
             echo "CURRENT Workflow ID: ${CIRCLE_WORKFLOW_ID:0:7}"
+            
       - run:
           name: Remove old stacks and files
           command: |
